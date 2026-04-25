@@ -1,4 +1,22 @@
-- name: 執行抓取
+name: Update Exchange Rates
+on:
+  schedule:
+    - cron: '0 * * * *'
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: 檢出代碼
+        uses: actions/checkout@v3
+      - name: 設定 Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.9'
+      - name: 安裝套件
+        run: pip install requests
+      - name: 執行抓取
         run: python chuck/2.exchange.py
       - name: 提交並推送更新
         run: |
@@ -6,4 +24,4 @@
           git config --global user.email "action@github.com"
           git add chuck/rates.json
           git commit -m "Update rates" || exit 0
-          git push
+          git push origin master
