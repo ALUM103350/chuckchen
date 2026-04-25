@@ -13,11 +13,11 @@ jobs:
         with:
           python-version: '3.9'
       - run: pip install yfinance requests
-      - run: python chuck/2.exchange.py
+      - run: python 2.exchange.py
       - name: Commit and push
         run: |
           git config --global user.name "GitHub Action"
           git config --global user.email "action@github.com"
-          git add chuck/history.json chuck/rates.json
+          git add history.json rates.json
           git commit -m "update data" || exit 0
           git push origin main
