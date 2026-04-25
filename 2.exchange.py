@@ -27,8 +27,8 @@ def get_finance_data():
     return current_results
 
 # 設定檔案路徑 (請確認與你的 index.html 在同個層級或對應路徑)
-history_file = 'chuck/history.json'
-rates_file = 'chuck/rates.json'
+history_file = 'history.json'
+rates_file = 'rates.json'
 
 new_entry = get_finance_data()
 
