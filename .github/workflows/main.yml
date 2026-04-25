@@ -24,4 +24,4 @@ jobs:
           git config --global user.email "action@github.com"
           git add chuck/rates.json
           git commit -m "Update rates" || exit 0
-          git push origin master
+          git push origin main
