@@ -1,36 +1,55 @@
-<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <title>家誠的財經儀表板</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-100 p-8">
+    <div class="max-w-4xl mx-auto">
+        <h1 class="text-3xl font-bold mb-8 text-center">即時金融監控</h1>
+        
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div class="bg-white p-4 rounded-xl shadow"><canvas id="chart-USD_TWD"></canvas></div>
+            <div class="bg-white p-4 rounded-xl shadow"><canvas id="chart-JPY_TWD"></canvas></div>
+            <div class="bg-white p-4 rounded-xl shadow"><canvas id="chart-Gold"></canvas></div>
+            <div class="bg-white p-4 rounded-xl shadow"><canvas id="chart-Oil"></canvas></div>
+        </div>
+        
+        <p id="update-time" class="text-center text-gray-500 mt-8">資料加載中...</p>
+    </div>
 
-<div class="grid grid-cols-1 md:grid-cols-2 gap-4 p-4">
-    <div class="bg-white p-4 rounded shadow"><canvas id="chart-USD_TWD"></canvas></div>
-    <div class="bg-white p-4 rounded shadow"><canvas id="chart-USD_JPY"></canvas></div>
-    <div class="bg-white p-4 rounded shadow"><canvas id="chart-Gold"></canvas></div>
-    <div class="bg-white p-4 rounded shadow"><canvas id="chart-Oil"></canvas></div>
-</div>
+    <script>
+        fetch('history.json')
+            .then(res => res.json())
+            .then(history => {
+                const labels = history.map(h => h.date);
+                const keys = ["USD_TWD", "JPY_TWD", "Gold", "Oil"];
+                const names = ["美金/台幣", "日幣/台幣", "黃金期貨", "原油期貨"];
+                const colors = ["#3b82f6", "#10b981", "#f59e0b", "#ef4444"];
 
-<script>
-    fetch('history.json')
-        .then(res => res.json())
-        .then(history => {
-            const labels = history.map(h => h.date);
-            const keys = ["USD_TWD", "USD_JPY", "Gold", "Oil"];
-            const colors = ["#3b82f6", "#10b981", "#f59e0b", "#ef4444"];
-
-            keys.forEach((key, index) => {
-                const ctx = document.getElementById(`chart-${key}`).getContext('2d');
-                new Chart(ctx, {
-                    type: 'line',
-                    data: {
-                        labels: labels,
-                        datasets: [{
-                            label: `${key} 走勢`,
-                            data: history.map(h => h.data[key]),
-                            borderColor: colors[index],
-                            fill: false,
-                            tension: 0.3
-                        }]
-                    },
-                    options: { responsive: true }
+                keys.forEach((key, index) => {
+                    const ctx = document.getElementById(`chart-${key}`).getContext('2d');
+                    new Chart(ctx, {
+                        type: 'line',
+                        data: {
+                            labels: labels,
+                            datasets: [{
+                                label: names[index],
+                                data: history.map(h => h.data[key]),
+                                borderColor: colors[index],
+                                tension: 0.3,
+                                fill: false
+                            }]
+                        }
+                    });
                 });
+                document.getElementById('update-time').innerText = '最後更新日期: ' + history[history.length-1].date;
+            })
+            .catch(err => {
+                document.getElementById('update-time').innerText = '讀取失敗，請確認 history.json 是否已產生';
             });
-        });
-</script>
+    </script>
+</body>
+</html>
