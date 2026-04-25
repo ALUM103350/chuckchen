@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>匯率監控</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-100 p-10">
+    <div class="max-w-md mx-auto bg-white p-6 rounded-xl shadow-md">
+        <h1 class="text-2xl font-bold mb-4">即時匯率 (USD 基準)</h1>
+        <div id="rates" class="space-y-2">載入中...</div>
+        <p class="text-sm text-gray-400 mt-4" id="update-time"></p>
+    </div>
+
+    <script>
+        fetch('rates.json')
+            .then(res => res.json())
+            .then(data => {
+                const targetCurrencies = ['TWD', 'JPY', 'EUR', 'CNY'];
+                let html = '';
+                targetCurrencies.forEach(cur => {
+                    html += `<div class="flex justify-between border-b py-2">
+                                <span>${cur}</span>
+                                <span class="font-mono font-bold">${data.rates[cur]}</span>
+                             </div>`;
+                });
+                document.getElementById('rates').innerHTML = html;
+                document.getElementById('update-time').innerText = '最後更新: ' + new Date(data.time_last_updated_unix * 1000).toLocaleString();
+            });
+    </script>
+</body>
+</html>
