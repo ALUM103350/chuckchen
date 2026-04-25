@@ -1,4 +1,4 @@
-name: Update Exchange Rates
+name: Update Finance Data
 on:
   schedule:
     - cron: '0 * * * *'
@@ -8,20 +8,24 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-      - name: 檢出代碼
+      - name: Checkout code
         uses: actions/checkout@v3
-      - name: 設定 Python
+
+      - name: Set up Python
         uses: actions/setup-python@v4
         with:
           python-version: '3.9'
-      - name: 安裝套件
+
+      - name: Install dependencies
         run: pip install requests yfinance
-      - name: 執行抓取
-        run: python chuck/2.exchange.py
-      - name: 提交並推送更新
+
+      - name: Run script
+        run: python 2.exchange.py
+
+      - name: Commit and push
         run: |
           git config --global user.name "GitHub Action"
           git config --global user.email "action@github.com"
-          git add chuck/rates.json chuck/history.json
-          git commit -m "Update finance data" || exit 0
+          git add history.json rates.json
+          git commit -m "Auto update finance data" || exit 0
           git push origin main
