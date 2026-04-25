@@ -1,31 +1,23 @@
 name: Update Finance Data
 on:
+  workflow_dispatch:
   schedule:
     - cron: '0 * * * *'
-  workflow_dispatch:
 
 jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v3
-
-      - name: Set up Python
-        uses: actions/setup-python@v4
+      - uses: actions/checkout@v3
+      - uses: actions/setup-python@v4
         with:
           python-version: '3.9'
-
-      - name: Install dependencies
-        run: pip install requests yfinance
-
-      - name: Run script
-        run: python chuck/2.exchange.py
-
+      - run: pip install yfinance requests
+      - run: python chuck/2.exchange.py
       - name: Commit and push
         run: |
           git config --global user.name "GitHub Action"
+          git config --global user.email "action@github.com"
           git add chuck/history.json chuck/rates.json
-          git add history.json rates.json
-          git commit -m "Auto update finance data" || exit 0
+          git commit -m "update data" || exit 0
           git push origin main
